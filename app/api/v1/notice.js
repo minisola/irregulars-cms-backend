@@ -8,67 +8,57 @@ const {
 } = require('lin-mizar');
 const { getSafeParamId } = require('../../libs/util');
 const {
-  BookSearchValidator,
-  CreateOrUpdateBookValidator
-} = require('../../validators/book');
+  CreateOrUpdateNoticeValidator
+} = require('../../validators/notice');
 
 const { PositiveIdValidator } = require('../../validators/common');
 
-const { BookNotFound } = require('../../libs/err-code');
-const { Book } = require('../../models/book');
-const { BookDao } = require('../../dao/book');
+const { NoticeNotFound } = require('../../libs/err-code');
+const { NoticeClass } = require('../../irregulars/notice');
 
-// book 的红图实例
+// notice 的红图实例
 const noticeApi = new LinRouter({
   prefix: '/v1/notice'
 });
 
-// book 的dao 数据库访问层实例
-const bookDto = new BookDao();
+// notice的数据库访问层实例
+const noticeClass = new NoticeClass();
 
 noticeApi.get('/:id', async ctx => {
   const v = await new PositiveIdValidator().validate(ctx);
   const id = v.get('path.id');
-  const book = await bookDto.getBook(id);
-  if (!book) {
+  const notice = await noticeClass.getNotice(id);
+  if (!notice) {
     throw new NotFound({
       msg: '没有找到相关公告'
     });
   }
-  ctx.json(book);
+  ctx.json(notice);
 });
 
 noticeApi.get('/', async ctx => {
-  const books = await bookDto.getBooks();
-  if (!books || books.length < 1) {
-    throw new NotFound({
+  const notices = await noticeClass.getNotices();
+  if (!notices || notices.length < 1) {
+    throw new NoticeNotFound({
       msg: '没有找到相关公告'
     });
   }
-  ctx.json(books);
-});
-
-noticeApi.get('/search/one', async ctx => {
-  const v = await new BookSearchValidator().validate(ctx);
-  const book = await bookDto.getBookByKeyword(v.get('query.q'));
-  if (!book) {
-    throw new BookNotFound();
-  }
-  ctx.json(book);
+  ctx.json(notices);
 });
 
 noticeApi.post('/', async ctx => {
-  const v = await new CreateOrUpdateBookValidator().validate(ctx);
-  await bookDto.createBook(v);
+  console.log(ctx)
+  const v = await new CreateOrUpdateNoticeValidator().validate(ctx);
+  await noticeClass.createNotice(v);
   ctx.success({
-    msg: '新建图书成功'
+    msg: '新增公告成功'
   });
 });
 
 noticeApi.put('/:id', async ctx => {
-  const v = await new CreateOrUpdateBookValidator().validate(ctx);
+  const v = await new CreateOrUpdateNoticeValidator().validate(ctx);
   const id = getSafeParamId(ctx);
-  await bookDto.updateBook(v, id);
+  await NoticeClass.updateNotice(v, id);
   ctx.success({
     msg: '更新公告成功'
   });
@@ -86,21 +76,11 @@ noticeApi.linDelete(
   async ctx => {
     const v = await new PositiveIdValidator().validate(ctx);
     const id = v.get('path.id');
-    await bookDto.deleteBook(id);
+    await noticeClass.deleteNotice(id);
     ctx.success({
       msg: '删除公告成功'
     });
   }
 );
-
-noticeApi.get('/', async ctx => {
-  const books = await Book.findAll();
-  if (books.length < 1) {
-    throw new NotFound({
-      msg: '没有找到相关公告'
-    });
-  }
-  ctx.json(books);
-});
 
 module.exports = { noticeApi, [disableLoading]: false };

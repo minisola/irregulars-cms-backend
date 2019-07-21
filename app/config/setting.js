@@ -3,7 +3,7 @@
 let siteDomain;
 switch (process.env.NODE_ENV) {
   case 'development':
-    siteDomain = 'http://localhost:5000';
+    siteDomain = 'http://localhost:5000/';
     break;
   case 'production':
     siteDomain = '';

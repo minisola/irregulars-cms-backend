@@ -27,7 +27,7 @@ class LocalUploader extends Uploader {
           key: file.fieldname,
           id: exist.id,
           path: `${exist.path}`,
-          url: `${siteDomain}/assets/${exist.path}`
+          url: `${siteDomain}assets/${exist.path}`
         });
       } else {
         const { absolutePath, relativePath, realName } = this.getStorePath(
@@ -51,7 +51,7 @@ class LocalUploader extends Uploader {
           key: file.fieldname,
           id: saved.id,
           path: `${saved.path}`,
-          url: `${siteDomain}/assets/${saved.path}`
+          url: `${siteDomain}assets/${saved.path}`
         });
       }
     }
