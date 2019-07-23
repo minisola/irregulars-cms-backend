@@ -58,7 +58,7 @@ noticeApi.post('/', async ctx => {
 noticeApi.put('/:id', async ctx => {
   const v = await new CreateOrUpdateNoticeValidator().validate(ctx);
   const id = getSafeParamId(ctx);
-  await NoticeClass.updateNotice(v, id);
+  await noticeClass.updateNotice(v, id);
   ctx.success({
     msg: '更新公告成功'
   });

@@ -15,9 +15,13 @@ class NoticeClass {
   }
   async getNotices () {
     const notices = await Notice.findAll({
+      attributes: { exclude: ['content'] },
       where: {
         delete_time: null
-      }
+      },
+      order: [
+        ['id', 'DESC']
+      ]
     });
     return notices;
   }
@@ -52,7 +56,7 @@ class NoticeClass {
         msg: '没有找到相关公告'
       });
     }
-    notice.destroy();
+    await notice.destroy();
   }
 }
 

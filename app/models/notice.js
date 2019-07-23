@@ -10,7 +10,7 @@ class Notice extends Model {
     let origin = {
       id: this.id,
       title: this.title,
-      author: this.content,
+      content: this.content,
       createTime: this.createTime,
       updateTime: this.updateTime
     };
